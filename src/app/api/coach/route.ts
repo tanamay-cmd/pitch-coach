@@ -4,8 +4,13 @@ import { ANALYSIS_SCHEMA, QUESTIONS_SCHEMA } from '@/lib/schemas'
 import type { CoachRequest } from '@/lib/types'
 
 export const runtime = 'nodejs'
-/** Analysis at high effort can take a while; Vercel caps Hobby at 60s regardless. */
-export const maxDuration = 120
+/**
+ * 60s is the ceiling on Vercel's Hobby plan, and asking for more than the plan allows
+ * fails the deploy rather than being clamped — so this is set to the value that works
+ * everywhere. On Pro (up to 800s with Fluid Compute) raise it if analysis at high effort
+ * with a large knowledge base starts timing out.
+ */
+export const maxDuration = 60
 
 const DEFAULT_MODEL = process.env.ANTHROPIC_MODEL || 'claude-opus-5'
 
@@ -60,7 +65,11 @@ export async function POST(req: Request) {
     )
   }
 
-  const client = new Anthropic({ apiKey: resolved.key })
+  // The SDK defaults to a 10-minute timeout, far past any serverless limit — so a slow
+  // request would be killed by the platform and surface as an opaque 504. Timing out
+  // just inside `maxDuration` means the user gets an actionable message instead.
+  // Units are milliseconds in the TypeScript SDK.
+  const client = new Anthropic({ apiKey: resolved.key, timeout: (maxDuration - 5) * 1000 })
   const model = body.model?.trim() || DEFAULT_MODEL
   const schema = body.action === 'questions' ? QUESTIONS_SCHEMA : ANALYSIS_SCHEMA
 
@@ -148,6 +157,16 @@ export async function POST(req: Request) {
       return NextResponse.json(
         { error: 'rate_limit', message: `Rate limited. Try again in about ${retryAfter}s.` },
         { status: 429 },
+      )
+    }
+    // APIConnectionTimeoutError extends APIConnectionError, so it must be caught first.
+    if (err instanceof Anthropic.APIConnectionTimeoutError) {
+      return NextResponse.json(
+        {
+          error: 'timeout',
+          message: `Claude took longer than ${maxDuration - 5}s. Lower the effort setting, trim the knowledge base, or raise maxDuration if your host allows it.`,
+        },
+        { status: 504 },
       )
     }
     if (err instanceof Anthropic.APIConnectionError) {

@@ -69,9 +69,32 @@ Then either set `ANTHROPIC_API_KEY` in **Project → Settings → Environment Va
 browser. Do **not** name it `NEXT_PUBLIC_ANTHROPIC_API_KEY` — that would ship your key to
 every visitor.
 
-One caveat on Hobby: serverless functions are capped at 60s. Analysis at `max` effort with
-a large knowledge base can exceed that. Drop effort to `high` or `medium` in Settings, or
-use a Pro project (the route already declares `maxDuration = 120`).
+### The one real constraint: function timeout
+
+`/api/coach` declares `maxDuration = 60`, the ceiling on Vercel's **Hobby** plan. Asking for
+more than your plan allows fails the deploy rather than being clamped, so 60 is the value
+that works everywhere. The SDK client times out at 55s and returns a readable message, so a
+slow call surfaces as "lower the effort setting" rather than an opaque platform 504.
+
+Analysis at `max` or `xhigh` effort with a large knowledge base can genuinely exceed 60s.
+If you hit it: drop effort to `medium` in Settings, trim the knowledge base, or move to Pro
+and raise `maxDuration` (up to 800s with Fluid Compute) in
+[`src/app/api/coach/route.ts`](src/app/api/coach/route.ts).
+
+### Other hosts
+
+Anything that runs a Node server works — the app writes nothing to disk and holds no
+server-side state. **Netlify**, **Render**, **Railway**, and **Fly.io** all deploy it as-is,
+and give you longer or unbounded request budgets than Hobby if timeouts bite. Self-hosting
+is `npm run build && npm start` behind any TLS-terminating reverse proxy.
+
+**Cloudflare Workers is the one that needs work** — the route sets `runtime = 'nodejs'`, so
+it would have to move to the edge runtime and be re-verified against the SDK.
+
+Whatever you pick, **HTTPS is non-negotiable**: `getUserMedia` refuses to hand over the
+camera on a plain-HTTP origin, so a bare LAN IP will load the page and then fail at "Start
+answering". Every host above terminates TLS for you; `localhost` is exempt, which is why
+`npm run dev` works without it.
 
 ---
 
