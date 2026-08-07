@@ -50,12 +50,15 @@ export default function Recorder({
     <div>
       <div className="relative overflow-hidden rounded-xl bg-black" style={{ aspectRatio: '16 / 9' }}>
         {showPlayback ? (
+          // Playback is deliberately never mirrored. The live preview is mirrored so you
+          // can position yourself naturally, but watching back should show what the room
+          // actually saw — including which way you were glancing.
           <video
             key={playbackUrl}
             src={playbackUrl}
             controls
             playsInline
-            className={`h-full w-full object-cover ${mirror && recordVideo ? 'mirror' : ''}`}
+            className="h-full w-full object-cover"
           />
         ) : (
           <video

@@ -35,12 +35,18 @@ const EXAMPLE_MARKERS = [
   'in practice',
 ]
 
-/** Words that signal a closing point rather than trailing off. */
+/**
+ * Phrases that signal a closing point rather than trailing off. Written as fragments
+ * that match whatever pronoun precedes them — "which matters because", "that matters
+ * because", and "it matters because" all land on `matters because`.
+ */
 const POINT_MARKERS = [
+  'matters because',
+  'means that',
   'which means',
-  'so the',
   'the takeaway',
-  'that matters because',
+  'the upshot',
+  'that matters',
   'the point is',
   'net net',
   'bottom line',
@@ -48,7 +54,9 @@ const POINT_MARKERS = [
   'so what',
   "that's why",
   'that is why',
+  'which is why',
   'the reason',
+  'ends up',
 ]
 
 const HEDGES = ['maybe', 'i guess', 'i think probably', 'sort of', 'kind of', 'not really sure']
@@ -124,10 +132,16 @@ export function computeMetrics(
   }
   longestMonologueRun = Math.max(longestMonologueRun, run)
 
+  // Nobody speaks above ~300 wpm; a figure that high means the transcript was typed or
+  // pasted after the fact, so the duration and the word count describe different things.
+  const rawWpm = durationSec > 3 ? Math.round(wordCount / (durationSec / 60)) : 0
+  const paceReliable = rawWpm > 0 && rawWpm <= 300
+
   const metrics: Metrics = {
     durationSec: Math.round(durationSec * 10) / 10,
     words: wordCount,
-    wordsPerMinute: durationSec > 3 ? Math.round(wordCount / (durationSec / 60)) : 0,
+    wordsPerMinute: paceReliable ? rawWpm : 0,
+    paceReliable,
     fillerCount,
     fillersFound: fillersFound.sort((a, b) => b.count - a.count),
     echoedQuestion,
@@ -162,7 +176,9 @@ export function metricsToText(m: Metrics): string {
   const lines = [
     `Duration: ${m.durationSec}s`,
     `Words: ${m.words}`,
-    `Pace: ${m.wordsPerMinute} words/min (110-150 is the calm zone; above 170 reads as nervous-fast)`,
+    m.paceReliable
+      ? `Pace: ${m.wordsPerMinute} words/min (110-150 is the calm zone; above 170 reads as nervous-fast)`
+      : 'Pace: not measurable — the transcript was typed or edited after the take, so it does not correspond to the recording length. Do not comment on pace.',
     `Fillers: ${m.fillerCount}${m.fillersFound.length ? ` (${m.fillersFound.map((f) => `${f.word} x${f.count}`).join(', ')})` : ''}`,
     `Repeated the question back: ${m.echoedQuestion ? 'yes' : 'no'}`,
     `First sentence answered it: ${m.openedWithAnswer ? 'yes' : 'no'}`,

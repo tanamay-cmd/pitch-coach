@@ -3,19 +3,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Recorder from './Recorder'
 import FeedbackPanel, { MetricsRow } from './FeedbackPanel'
+import PreviewPanel, { MetricsDetail } from './PreviewPanel'
 import { KnowledgePanel, PromptStudio, SettingsPanel } from './SidePanels'
 import { LEVEL_LABELS, MODES, MODE_BY_ID } from '@/lib/modes'
-import { computeMetrics, metricsToText } from '@/lib/metrics'
-import { coachingPrompt, localAnalysis } from '@/lib/localCoach'
+import { computeMetrics } from '@/lib/metrics'
+import { localAnalysis } from '@/lib/localCoach'
 import { buildKnowledge } from '@/lib/files'
 import { Transcriber, speechSupported } from '@/lib/speech'
 import { closeStream, openCamera, startRecorder, stopRecorder, type CaptureHandles } from '@/lib/media'
-import { CoachError, analyzeTake, fetchKeyStatus, generateQuestions } from '@/lib/client'
+import { CoachError, analyzeTake, buildAnalyzePrompt, fetchKeyStatus, generateQuestions } from '@/lib/client'
 import * as store from '@/lib/storage'
 import type { Analysis, KnowledgeDoc, Metrics, ModeId, Question, Settings, Take } from '@/lib/types'
 import { DEFAULT_PROMPTS, type PromptSet } from '@/lib/prompts'
 
-type Tab = 'knowledge' | 'prompts' | 'settings' | 'history'
+type Tab = 'knowledge' | 'preview' | 'prompts' | 'settings' | 'history'
 
 export default function CoachApp() {
   /* ------------------------------- persisted state ------------------------------ */
@@ -265,22 +266,22 @@ export default function CoachApp() {
     }
   }
 
+  /**
+   * Copies the same prompt the app would send, rather than a parallel hand-written one —
+   * so pasting into Claude yourself gives the identical result, and any prompt edits you
+   * made in the Prompt Studio come along with it.
+   */
   function copyForClaude() {
     if (!currentTake) return
     const take = refreshedTake(currentTake)
+    if (!take.transcript.trim()) {
+      setError('Nothing to copy yet — the transcript is empty.')
+      return
+    }
+    const { system, user } = buildAnalyzePrompt(ctx, take.question, take.transcript, take.metrics)
     void navigator.clipboard
-      ?.writeText(
-        coachingPrompt(
-          modeDef.label,
-          modeDef.formula,
-          topic,
-          take.question,
-          take.transcript,
-          metricsToText(take.metrics),
-          settings.targetSeconds,
-        ),
-      )
-      .then(() => setNotice('Coaching prompt copied. Paste it into Claude, or anywhere else.'))
+      ?.writeText(`${system}\n\n---\n\n${user}`)
+      .then(() => setNotice('Coaching prompt copied — exactly what the app would send. Paste it anywhere.'))
   }
 
   /* ------------------------------------ render ---------------------------------- */
@@ -468,7 +469,10 @@ export default function CoachApp() {
           </div>
 
           {currentTake && !recording && (
-            <MetricsRow m={currentTake.metrics} targetSeconds={settings.targetSeconds} />
+            <>
+              <MetricsRow m={currentTake.metrics} targetSeconds={settings.targetSeconds} />
+              <MetricsDetail m={currentTake.metrics} targetSeconds={settings.targetSeconds} />
+            </>
           )}
 
           {currentTake?.analysis && <FeedbackPanel analysis={currentTake.analysis} />}
@@ -492,7 +496,7 @@ export default function CoachApp() {
         {/* ------------------------------ right column ----------------------------- */}
         <aside className="min-w-0">
           <div className="mb-3 flex flex-wrap gap-1.5">
-            {(['knowledge', 'prompts', 'settings', 'history'] as Tab[]).map((t) => (
+            {(['knowledge', 'preview', 'prompts', 'settings', 'history'] as Tab[]).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -517,6 +521,17 @@ export default function CoachApp() {
                 script={script}
                 onScript={setScript}
                 showScript={mode === 'script'}
+              />
+            )}
+            {tab === 'preview' && (
+              <PreviewPanel
+                ctx={ctx}
+                level={level}
+                take={currentTake ? refreshedTake(currentTake) : null}
+                onNotice={(m) => {
+                  setError('')
+                  setNotice(m)
+                }}
               />
             )}
             {tab === 'prompts' && <PromptStudio prompts={prompts} onChange={setPrompts} />}

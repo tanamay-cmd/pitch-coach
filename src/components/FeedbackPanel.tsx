@@ -21,7 +21,7 @@ function Stat({ n, label, tone }: { n: string | number; label: string; tone?: st
 
 export function MetricsRow({ m, targetSeconds }: { m: Metrics; targetSeconds: number }) {
   const paceTone =
-    m.wordsPerMinute === 0
+    !m.paceReliable || m.wordsPerMinute === 0
       ? undefined
       : m.wordsPerMinute >= 110 && m.wordsPerMinute <= 150
         ? 'var(--color-ok)'
@@ -38,7 +38,7 @@ export function MetricsRow({ m, targetSeconds }: { m: Metrics; targetSeconds: nu
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
       <Stat n={`${m.durationSec}s`} label="Duration" tone={lenTone} />
-      <Stat n={m.wordsPerMinute || '–'} label="Words/min" tone={paceTone} />
+      <Stat n={m.paceReliable ? m.wordsPerMinute : '–'} label="Words/min" tone={paceTone} />
       <Stat n={m.fillerCount} label="Fillers" tone={fillerTone} />
       {m.scriptCoverage !== undefined ? (
         <Stat n={`${m.scriptCoverage}%`} label="Script covered" tone={scoreColor(m.scriptCoverage)} />

@@ -41,13 +41,19 @@ export async function fetchKeyStatus(): Promise<KeyStatus> {
   }
 }
 
-interface Ctx {
+export interface Ctx {
   mode: ModeId
   topic: string
   knowledge: string
   script: string
   settings: Settings
   prompts: PromptSet
+}
+
+/** The rendered pair actually sent to the API. Also what the Preview tab displays. */
+export interface RenderedPrompt {
+  system: string
+  user: string
 }
 
 function baseVars(ctx: Ctx): Record<string, string | number> {
@@ -62,8 +68,44 @@ function baseVars(ctx: Ctx): Record<string, string | number> {
   }
 }
 
-export async function generateQuestions(ctx: Ctx, level: number, count: number): Promise<Question[]> {
+/**
+ * Prompt assembly lives here, separate from sending, so the Preview tab and the
+ * clipboard button show byte-for-byte what the request will contain. If these ever
+ * diverge, the preview is lying.
+ */
+export function buildQuestionPrompt(ctx: Ctx, level: number, count: number): RenderedPrompt {
   const vars = { ...baseVars(ctx), level, count }
+  return {
+    system: render(ctx.prompts.questionSystem, vars),
+    user: render(ctx.prompts.questionUser, vars),
+  }
+}
+
+export function buildAnalyzePrompt(
+  ctx: Ctx,
+  question: string,
+  transcript: string,
+  metrics: Metrics,
+): RenderedPrompt {
+  const scriptBlock =
+    ctx.mode === 'script' && ctx.script.trim() ? `SCRIPT THEY WERE DELIVERING\n${ctx.script.trim()}` : ''
+
+  const vars = {
+    ...baseVars(ctx),
+    question,
+    transcript,
+    metrics: metricsToText(metrics),
+    script: scriptBlock,
+  }
+
+  return {
+    system: `${render(ctx.prompts.analyzeSystem, vars)}\n\n${MODE_RUBRICS[ctx.mode]}`,
+    user: render(ctx.prompts.analyzeUser, vars),
+  }
+}
+
+export async function generateQuestions(ctx: Ctx, level: number, count: number): Promise<Question[]> {
+  const { system, user } = buildQuestionPrompt(ctx, level, count)
   const body: CoachRequest = {
     action: 'questions',
     mode: ctx.mode,
@@ -71,8 +113,8 @@ export async function generateQuestions(ctx: Ctx, level: number, count: number):
     knowledge: ctx.knowledge,
     level,
     count,
-    systemPrompt: render(ctx.prompts.questionSystem, vars),
-    userPrompt: render(ctx.prompts.questionUser, vars),
+    systemPrompt: system,
+    userPrompt: user,
     model: ctx.settings.model,
     // Question generation is a much lighter lift than analysis; no need to burn
     // the analysis effort level on it.
@@ -90,20 +132,7 @@ export async function analyzeTake(
   transcript: string,
   metrics: Metrics,
 ): Promise<Analysis> {
-  const scriptBlock =
-    ctx.mode === 'script' && ctx.script.trim()
-      ? `SCRIPT THEY WERE DELIVERING\n${ctx.script.trim()}`
-      : ''
-
-  const vars = {
-    ...baseVars(ctx),
-    question,
-    transcript,
-    metrics: metricsToText(metrics),
-    script: scriptBlock,
-  }
-
-  const systemPrompt = `${render(ctx.prompts.analyzeSystem, vars)}\n\n${MODE_RUBRICS[ctx.mode]}`
+  const { system, user } = buildAnalyzePrompt(ctx, question, transcript, metrics)
 
   const body: CoachRequest = {
     action: 'analyze',
@@ -115,8 +144,8 @@ export async function analyzeTake(
     metrics,
     script: ctx.script,
     targetSeconds: ctx.settings.targetSeconds,
-    systemPrompt,
-    userPrompt: render(ctx.prompts.analyzeUser, vars),
+    systemPrompt: system,
+    userPrompt: user,
     model: ctx.settings.model,
     effort: ctx.settings.effort,
   }

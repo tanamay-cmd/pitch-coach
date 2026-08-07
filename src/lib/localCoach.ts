@@ -9,7 +9,8 @@
 import type { Analysis, Metrics, ModeId } from './types'
 import { MODE_BY_ID } from './modes'
 
-function paceScore(wpm: number): { score: number; comment: string } {
+function paceScore(wpm: number, reliable: boolean): { score: number; comment: string } {
+  if (!reliable) return { score: 0, comment: 'Pace not measurable — the transcript was typed or edited after the take.' }
   if (wpm === 0) return { score: 0, comment: 'Too short to measure pace.' }
   if (wpm < 90) return { score: 60, comment: `${wpm} wpm — slow enough that attention drifts. Aim for 110-150.` }
   if (wpm < 110) return { score: 78, comment: `${wpm} wpm — a touch slow, but deliberate reads as confident.` }
@@ -43,7 +44,7 @@ export function localAnalysis(
   metrics: Metrics,
   targetSeconds: number,
 ): Analysis {
-  const pace = paceScore(metrics.wordsPerMinute)
+  const pace = paceScore(metrics.wordsPerMinute, metrics.paceReliable)
   const filler = fillerScore(metrics.fillerCount, metrics.words)
   const length = lengthScore(metrics.durationSec, targetSeconds)
 
@@ -60,7 +61,9 @@ export function localAnalysis(
         metrics.endedWithPoint ? 'Closed on a point.' : 'Trailed off rather than landing a point.',
       ].join(' '),
     },
-    { name: 'Pace', score: pace.score, comment: pace.comment },
+    // An unmeasurable pace is left out entirely rather than scored zero — averaging in a
+    // 0 for something we simply could not observe would misreport the whole take.
+    ...(metrics.paceReliable ? [{ name: 'Pace', score: pace.score, comment: pace.comment }] : []),
     { name: 'Fillers', score: filler.score, comment: filler.comment },
     { name: 'Length discipline', score: length.score, comment: length.comment },
   ]
@@ -127,37 +130,4 @@ export function localAnalysis(
     followUpQuestion: 'Run the same question again and try to beat this score.',
     source: 'local',
   }
-}
-
-/** Clipboard payload so a no-key user can paste the take into Claude, ChatGPT, or anywhere else. */
-export function coachingPrompt(
-  modeLabel: string,
-  formula: string,
-  topic: string,
-  question: string,
-  transcript: string,
-  metricsText: string,
-  targetSeconds: number,
-): string {
-  return `You are a demanding but fair speaking coach. Coach the answer below.
-
-MODE: ${modeLabel} — the shape being practised is: ${formula}
-TOPIC / ROLE: ${topic || '(not set)'}
-TARGET LENGTH: about ${targetSeconds} seconds
-
-QUESTION ASKED
-${question}
-
-WHAT I SAID (live speech-to-text, so ignore punctuation and mis-heard words)
-${transcript}
-
-MEASURED DELIVERY
-${metricsText}
-
-Give me:
-1. A score out of 100 and one sentence on why.
-2. What worked, quoting my actual words.
-3. The three highest-leverage fixes, each with the exact replacement wording.
-4. A model answer I could say out loud in ${targetSeconds} seconds, in my register, inventing no facts.
-5. One follow-up question to run next.`
 }

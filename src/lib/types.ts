@@ -20,7 +20,14 @@ export interface KnowledgeDoc {
 export interface Metrics {
   durationSec: number
   words: number
+  /** 0 when pace could not be measured — see `paceReliable`. */
   wordsPerMinute: number
+  /**
+   * False when the word count and the recording length clearly do not correspond —
+   * a transcript that was typed or pasted rather than spoken. The coach is told pace
+   * is unmeasurable rather than being handed a fabricated number to scold you for.
+   */
+  paceReliable: boolean
   fillerCount: number
   fillersFound: { word: string; count: number }[]
   echoedQuestion: boolean
