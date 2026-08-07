@@ -1,0 +1,27 @@
+{
+  "name": "pitch-coach",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Camera + mic practice coach for impromptu speaking, interviews, pitches, and scripted delivery. Claude analyses each take.",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.115.0",
+    "next": "^15.5.4",
+    "pdfjs-dist": "^4.10.38",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.13",
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.10",
+    "@types/react-dom": "^19.1.7",
+    "tailwindcss": "^4.1.13",
+    "typescript": "^5.8.3"
+  }
+}
