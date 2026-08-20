@@ -9,3 +9,9 @@ build/
 .vercel
 *.tsbuildinfo
 next-env.d.ts
+
+# Local AI working notes stay out of the repo — but agents/ and the /prep command are the
+# product, not notes, so .claude/commands/ is committed deliberately. See docs/adr/0001.
+CLAUDE.md
+.claude/*
+!.claude/commands/

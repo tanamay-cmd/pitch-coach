@@ -3,7 +3,7 @@
 import { useRef, useState } from 'react'
 import { DEFAULT_PROMPTS, PROMPT_VARIABLES, usedVariables, type PromptSet } from '@/lib/prompts'
 import { importFile } from '@/lib/files'
-import type { KnowledgeDoc, Settings } from '@/lib/types'
+import type { KnowledgeDoc, PrepPack, Settings } from '@/lib/types'
 
 /* ---------------------------------- Settings --------------------------------- */
 
@@ -156,6 +156,10 @@ export function KnowledgePanel({
   script,
   onScript,
   showScript,
+  onLoadPack,
+  loadedPackId,
+  packs,
+  skipped,
 }: {
   notes: string
   onNotes: (v: string) => void
@@ -164,6 +168,12 @@ export function KnowledgePanel({
   script: string
   onScript: (v: string) => void
   showScript: boolean
+  onLoadPack: (id: string) => void
+  loadedPackId: string | null
+  /** Researched packs from scenarios/ followed by the built-in ones. */
+  packs: PrepPack[]
+  /** Scenario folders that failed to parse, surfaced so a bad pack.json is not silent. */
+  skipped: { id: string; reason: string }[]
 }) {
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -190,6 +200,70 @@ export function KnowledgePanel({
 
   return (
     <div className="space-y-5">
+      <section className="rounded-lg border border-[var(--color-accent)]/40 bg-[var(--color-accent)]/5 p-3">
+        <label className="mb-1.5 block text-sm font-medium">Prep packs</label>
+        <p className="mb-2 text-[12px] leading-relaxed text-[var(--color-muted)]">
+          Loads a whole practice setup at once: mode, topic, grounding notes, question list,
+          and timing. Everything stays editable afterwards.
+        </p>
+        <div className="space-y-1.5">
+          {packs.map((p) => (
+            <div key={p.id} className="rounded-md bg-[#101014] p-2.5">
+              <div className="flex items-start justify-between gap-2">
+                <span className="min-w-0 text-[13px] font-medium">
+                  {p.label}
+                  {p.origin === 'scenario' && (
+                    <span className="ml-1.5 rounded-full border border-[var(--color-accent)]/50 px-1.5 py-0.5 text-[10px] font-normal uppercase tracking-wide text-[var(--color-accent)]">
+                      researched
+                    </span>
+                  )}
+                </span>
+                <button
+                  type="button"
+                  className={`btn shrink-0 !px-2 !py-0.5 !text-[11px] ${loadedPackId === p.id ? '' : 'btn-primary'}`}
+                  onClick={() => onLoadPack(p.id)}
+                >
+                  {loadedPackId === p.id ? 'Reload' : 'Load'}
+                </button>
+              </div>
+              <p className="mt-1 text-[12px] leading-relaxed text-[var(--color-muted)]">{p.blurb}</p>
+              <p className="mt-1 text-[11px] text-[var(--color-muted)]">
+                {p.questions.length} questions · {p.targetSeconds}s target
+                {p.briefing ? ' · briefing + rubric' : ''}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {skipped.length > 0 && (
+          <div className="mt-2 rounded-md border border-[var(--color-bad)]/50 bg-[var(--color-bad)]/10 p-2">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--color-bad)]">
+              {skipped.length} scenario{skipped.length === 1 ? '' : 's'} not loaded
+            </p>
+            <ul className="mt-1 space-y-0.5">
+              {skipped.map((sk) => (
+                <li key={sk.id} className="text-[11px] leading-relaxed text-[var(--color-muted)]">
+                  <code className="font-mono">scenarios/{sk.id}</code> — {sk.reason}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        <p className="mt-2 text-[11px] leading-relaxed text-[var(--color-muted)]">
+          Built-in packs are generic scenarios. For one researched against a real company and
+          round — its questions, its rubric, its traps — run{' '}
+          <code className="font-mono text-[var(--color-accent)]">/prep &lt;scenario&gt;</code> in
+          Claude Code, then reload.
+        </p>
+
+        {loadedPackId && (
+          <p className="mt-2 text-[12px] text-[var(--color-warn)]">
+            Loading a pack overwrites Topic and Notes. Copy anything you want to keep first.
+          </p>
+        )}
+      </section>
+
       <section>
         <label className="mb-1.5 block text-sm font-medium">Notes</label>
         <textarea

@@ -6,7 +6,7 @@
  * as an empty string rather than leaking the literal `{{...}}` into the prompt.
  */
 
-import type { ModeId } from './types'
+import type { Briefing, ModeId } from './types'
 
 export interface PromptSet {
   questionSystem: string
@@ -28,6 +28,11 @@ export const PROMPT_VARIABLES: { name: string; note: string }[] = [
   { name: 'target_seconds', note: 'Your target answer length' },
   { name: 'level', note: '1 warm-up, 2 real, 3 curveball, 4 story rep' },
   { name: 'count', note: 'How many questions to generate' },
+  { name: 'mode_rubric', note: "The mode's built-in scoring dimensions" },
+  {
+    name: 'rubric',
+    note: 'The researched rubric from a scenario pack, or empty when none is loaded',
+  },
 ]
 
 const SHARED_GROUNDING = `You are coaching a specific person on a specific topic. Everything you say must be
@@ -83,7 +88,11 @@ How to judge:
 - Be concrete and specific. "Add more detail" is useless; "name the system and the number
   of users" is coaching.
 - The model answer must be sayable out loud in about {{target_seconds}} seconds, in this
-  person's own register, using only facts from the material above and from what they said.`,
+  person's own register, using only facts from the material above and from what they said.
+
+{{mode_rubric}}
+
+{{rubric}}`,
 
   analyzeUser: `QUESTION ASKED
 {{question}}
@@ -131,4 +140,36 @@ export function usedVariables(template: string): string[] {
   const found = new Set<string>()
   for (const m of template.matchAll(/\{\{(\w+)\}\}/g)) found.add(m[1])
   return [...found]
+}
+
+/**
+ * Renders a scenario pack's researched rubric into the coaching prompt.
+ *
+ * This is what connects the prep agents to the live coaching: the dimensions the research
+ * found this interviewer actually grades on replace the generic mode dimensions, so the
+ * score you see while practising is against the real bar rather than a default one.
+ */
+export function rubricBlock(briefing: Briefing | undefined): string {
+  if (!briefing?.rubric.length) return ''
+  const dims = briefing.rubric
+    .map(
+      (d) =>
+        `- ${d.name} (weight: ${d.weight})\n    Strong: ${d.good}\n    Weak: ${d.bad}`,
+    )
+    .join('\n')
+
+  const traps = briefing.traps.length
+    ? `\n\nKNOWN TRAPS IN THIS ROUND — call these out by name if they appear:\n${briefing.traps
+        .map((t) => `- ${t.trap} → instead: ${t.instead}`)
+        .join('\n')}`
+    : ''
+
+  return `RESEARCHED RUBRIC FOR THIS SPECIFIC ROUND
+This was researched for the exact scenario being practised and OVERRIDES the generic
+dimensions above. Score these dimensions, using these names, weighted as marked.
+
+${dims}${traps}
+
+Weight matters: a high-weight dimension scoring badly should drag the overall score down
+even if everything else is fine.`
 }

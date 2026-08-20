@@ -4,19 +4,37 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import Recorder from './Recorder'
 import FeedbackPanel, { MetricsRow } from './FeedbackPanel'
 import PreviewPanel, { MetricsDetail } from './PreviewPanel'
+import BriefingPanel from './BriefingPanel'
 import { KnowledgePanel, PromptStudio, SettingsPanel } from './SidePanels'
 import { LEVEL_LABELS, MODES, MODE_BY_ID } from '@/lib/modes'
+import { PACKS as BUILT_IN_PACKS } from '@/lib/packs'
 import { computeMetrics } from '@/lib/metrics'
 import { localAnalysis } from '@/lib/localCoach'
 import { buildKnowledge } from '@/lib/files'
 import { Transcriber, speechSupported } from '@/lib/speech'
 import { closeStream, openCamera, startRecorder, stopRecorder, type CaptureHandles } from '@/lib/media'
-import { CoachError, analyzeTake, buildAnalyzePrompt, fetchKeyStatus, generateQuestions } from '@/lib/client'
+import {
+  CoachError,
+  analyzeTake,
+  buildAnalyzePrompt,
+  fetchKeyStatus,
+  fetchScenarios,
+  generateQuestions,
+} from '@/lib/client'
 import * as store from '@/lib/storage'
-import type { Analysis, KnowledgeDoc, Metrics, ModeId, Question, Settings, Take } from '@/lib/types'
+import type {
+  Analysis,
+  KnowledgeDoc,
+  Metrics,
+  ModeId,
+  PrepPack,
+  Question,
+  Settings,
+  Take,
+} from '@/lib/types'
 import { DEFAULT_PROMPTS, type PromptSet } from '@/lib/prompts'
 
-type Tab = 'knowledge' | 'preview' | 'prompts' | 'settings' | 'history'
+type Tab = 'knowledge' | 'briefing' | 'preview' | 'prompts' | 'settings' | 'history'
 
 export default function CoachApp() {
   /* ------------------------------- persisted state ------------------------------ */
@@ -46,6 +64,31 @@ export default function CoachApp() {
   const [error, setError] = useState('')
   const [notice, setNotice] = useState('')
   const [tab, setTab] = useState<Tab>('knowledge')
+  /** The whole loaded pack, not just its id — the briefing and rubric ride along with it. */
+  const [loadedPack, setLoadedPack] = useState<PrepPack | null>(null)
+  /** Full pack question list; `questions` holds the current level's slice of it. */
+  const [packQuestions, setPackQuestions] = useState<Question[]>([])
+  /** Researched packs from scenarios/, fetched at startup alongside the built-ins. */
+  const [scenarioPacks, setScenarioPacks] = useState<PrepPack[]>([])
+  const [scenarioSkipped, setScenarioSkipped] = useState<{ id: string; reason: string }[]>([])
+
+  /**
+   * With a pack loaded the level selector filters its questions rather than regenerating,
+   * so you can drill just the curveballs without losing the pack.
+   */
+  function changeLevel(next: number) {
+    setLevel(next)
+    setCurrentTake(null)
+    if (!packQuestions.length) return
+    const slice = packQuestions.filter((qn) => qn.level === next)
+    setQuestions(slice)
+    setQIndex(0)
+    setNotice(
+      slice.length
+        ? `${slice.length} level-${next} question${slice.length === 1 ? '' : 's'} from the pack.`
+        : `The pack has no level-${next} questions. Press Get questions to generate some.`,
+    )
+  }
 
   const captureRef = useRef<CaptureHandles | null>(null)
   const transcriberRef = useRef<Transcriber | null>(null)
@@ -67,6 +110,10 @@ export default function CoachApp() {
       // Adopt the deployment's configured model unless the user has already picked one.
       setSettings((prev) => (prev.model === store.DEFAULT_SETTINGS.model ? { ...prev, model: s.model } : prev))
     })
+    void fetchScenarios().then(({ packs, skipped }) => {
+      setScenarioPacks(packs)
+      setScenarioSkipped(skipped)
+    })
   }, [])
 
   useEffect(() => {
@@ -81,6 +128,45 @@ export default function CoachApp() {
   useEffect(() => { if (ready) store.saveScript(script) }, [script, ready])
   useEffect(() => { if (ready) store.saveTakes(takes) }, [takes, ready])
   useEffect(() => { if (ready) store.saveTopic(mode, topic) }, [topic, mode, ready])
+
+  /**
+   * Loading a pack replaces the practice setup wholesale — mode, topic, notes, timing, and
+   * the question list. Uploaded files and Prompt Studio edits are left alone, since those
+   * are yours rather than the pack's.
+   */
+  function loadPack(id: string) {
+    const pack = allPacks.find((p) => p.id === id)
+    if (!pack) return
+    // Persist the topic under the pack's mode *before* switching, because setMode fires the
+    // per-mode topic effect, which would otherwise reload that mode's stored (empty) topic
+    // and clobber what we set here.
+    store.saveTopic(pack.mode, pack.topic)
+    setMode(pack.mode)
+    setTopic(pack.topic)
+    setNotes(pack.notes)
+    setSettings((s) => ({
+      ...s,
+      targetSeconds: pack.targetSeconds,
+      greenZoneSeconds: pack.greenZoneSeconds,
+    }))
+    setPackQuestions(pack.questions)
+    const startLevel = pack.questions[0]?.level ?? 1
+    setLevel(startLevel)
+    setQuestions(pack.questions.filter((qn) => qn.level === startLevel))
+    setQIndex(0)
+    setCurrentTake(null)
+    setLoadedPack(pack)
+    setError('')
+    // A researched pack is worth reading before recording, so loading one lands you on the
+    // briefing rather than leaving the report a tab away and unread.
+    if (pack.briefing) setTab('briefing')
+    setNotice(
+      `Loaded "${pack.label}" — ${pack.questions.length} questions, ${pack.targetSeconds}s target.` +
+        (pack.briefing
+          ? ' Read the briefing, then press Start answering — takes are scored against its rubric.'
+          : ' Press Start answering.'),
+    )
+  }
 
   // Switching mode retargets the timer to that mode's natural length.
   const changeMode = (m: ModeId) => {
@@ -100,14 +186,30 @@ export default function CoachApp() {
     }
   }, [])
 
+  // Researched packs first: if you generated one, it is what you came here to practise.
+  const allPacks = useMemo(() => [...scenarioPacks, ...BUILT_IN_PACKS], [scenarioPacks])
   const knowledge = useMemo(() => buildKnowledge(notes, docs), [notes, docs])
   const currentQuestion = questions[qIndex]
   const modeDef = MODE_BY_ID[mode]
   const hasKey = Boolean(settings.apiKey.trim()) || serverKey
 
+  /**
+   * The loaded pack's briefing only applies while you are still practising that pack — once
+   * you switch modes the researched rubric no longer describes the round, so it is dropped
+   * rather than silently scoring an impromptu take against a system-design rubric.
+   */
+  const activeBriefing = loadedPack?.mode === mode ? loadedPack.briefing : undefined
+
+  /**
+   * The Briefing tab shows the loaded pack's report. With no researched pack loaded it
+   * previews the first one on disk instead, so a generated scenario is discoverable rather
+   * than hidden behind loading it first.
+   */
+  const briefingPack = loadedPack?.briefing ? loadedPack : (scenarioPacks[0] ?? null)
+
   const ctx = useMemo(
-    () => ({ mode, topic, knowledge, script, settings, prompts }),
-    [mode, topic, knowledge, script, settings, prompts],
+    () => ({ mode, topic, knowledge, script, settings, prompts, briefing: activeBriefing }),
+    [mode, topic, knowledge, script, settings, prompts, activeBriefing],
   )
 
   /* --------------------------------- questions ---------------------------------- */
@@ -332,14 +434,18 @@ export default function CoachApp() {
               <select
                 className="field !w-auto !py-1.5 text-[13px]"
                 value={level}
-                onChange={(e) => setLevel(Number(e.target.value))}
+                onChange={(e) => changeLevel(Number(e.target.value))}
                 disabled={recording}
               >
-                {[1, 2, 3, 4].map((l) => (
-                  <option key={l} value={l}>
-                    Level {l} · {LEVEL_LABELS[l]}
-                  </option>
-                ))}
+                {[1, 2, 3, 4].map((l) => {
+                  const n = packQuestions.filter((qn) => qn.level === l).length
+                  return (
+                    <option key={l} value={l}>
+                      Level {l} · {LEVEL_LABELS[l]}
+                      {n ? ` (${n})` : ''}
+                    </option>
+                  )
+                })}
               </select>
               <button
                 type="button"
@@ -496,7 +602,7 @@ export default function CoachApp() {
         {/* ------------------------------ right column ----------------------------- */}
         <aside className="min-w-0">
           <div className="mb-3 flex flex-wrap gap-1.5">
-            {(['knowledge', 'preview', 'prompts', 'settings', 'history'] as Tab[]).map((t) => (
+            {(['knowledge', 'briefing', 'preview', 'prompts', 'settings', 'history'] as Tab[]).map((t) => (
               <button
                 key={t}
                 type="button"
@@ -507,6 +613,7 @@ export default function CoachApp() {
                 {t === 'history' && takes.length > 0 && (
                   <span className="ml-1 text-[var(--color-muted)]">{takes.length}</span>
                 )}
+                {t === 'briefing' && activeBriefing && <span className="ml-1 text-[var(--color-accent)]">•</span>}
               </button>
             ))}
           </div>
@@ -521,6 +628,17 @@ export default function CoachApp() {
                 script={script}
                 onScript={setScript}
                 showScript={mode === 'script'}
+                onLoadPack={loadPack}
+                loadedPackId={loadedPack?.id ?? null}
+                packs={allPacks}
+                skipped={scenarioSkipped}
+              />
+            )}
+            {tab === 'briefing' && (
+              <BriefingPanel
+                pack={briefingPack}
+                onLoadPack={loadPack}
+                isLoaded={Boolean(briefingPack) && briefingPack?.id === loadedPack?.id}
               />
             )}
             {tab === 'preview' && (

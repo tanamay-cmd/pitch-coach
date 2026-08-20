@@ -1,0 +1,267 @@
+{
+  "label": "Amazon — system design",
+  "blurb": "The 45-60 minute design round, broken into the spoken units it is made of. Scores you on scoping before designing, designing for failure before scale, and whether a trade-off is argued or just asserted.",
+  "mode": "interview",
+  "topic": "Amazon system design interview — [L4 / L5 / L6] SDE. Resiliency and ownership weighted over raw scale.",
+  "targetSeconds": 150,
+  "greenZoneSeconds": 120,
+  "researchedOn": "2026-08-20",
+  "notes": "=== GROUND TRUTH (the coach may not invent anything outside this) ===\n\nReplace this block before you practise. The coach is only as specific as what you paste in.\n\n- The systems you have actually operated, with rough numbers: QPS, data volume, storage size,\n  team size, how long it ran.\n- The level you are interviewing at. L4 gets bounded problems (rate limiter, URL shortener).\n  L5 is expected to handle sharding, replication and failure modes. L6+ is expected to drive\n  an ambiguous prompt and defend choices under pressure.\n- A production incident you personally contributed to, and what changed permanently after.\n- A design decision you got wrong, and what it cost.\n- The technologies you can defend under a follow-up, versus the ones you have only read about.\n- 10-12 stories mapped across Amazon's 16 Leadership Principles, since this round scores them\n  inside the technical conversation rather than in a separate block.\n\n=== HOW TO USE THIS PACK ===\n\nA real Amazon design round is 45-60 minutes of continuous two-way conversation. You cannot\npractise that alone into a webcam, and you should not try. What loses the round is almost\nnever the architecture — it is the 90-150 second spoken units it is built from: an opening\nthat draws before it asks, a data model you cannot justify, a trade-off asserted rather than\nargued, a failure mode you reached only when prompted.\n\nEach question below is one of those units. Drill them separately here, then run the whole\nround end to end with a human.\n\n=== GAPS ===\n\nList what you cannot yet answer with a number. A vague number is worse than no number in this\nround — Amazon's debriefs are evidence-based, and an interviewer who liked you still has to\nwrite down a specific observed behaviour. If an answer needs a figure you do not have and you\nhand-wave instead, the coach should say so plainly rather than scoring around it.",
+  "questions": [
+    {
+      "level": 1,
+      "text": "I want you to design a URL shortener. Go.",
+      "probing": "Whether you ask before you draw. Waiting to be given the scope reads as a lack of ownership, and the first five minutes are scored."
+    },
+    {
+      "level": 1,
+      "text": "State the requirements back to me before you design anything.",
+      "probing": "Whether you separate functional from non-functional, and whether you commit to numbers instead of hedging."
+    },
+    {
+      "level": 1,
+      "text": "Give me your back-of-the-envelope numbers for this system.",
+      "probing": "Whether the arithmetic happens out loud and is roughly right. Silence while you compute is worse than an approximate answer narrated."
+    },
+    {
+      "level": 2,
+      "text": "Walk me through the API before you draw any boxes.",
+      "probing": "Whether the interface comes before the implementation, or whether you reach for components first."
+    },
+    {
+      "level": 2,
+      "text": "Take me through your data model and why it is shaped that way.",
+      "probing": "Whether the schema follows from the access patterns or from whatever you used last."
+    },
+    {
+      "level": 2,
+      "text": "What breaks first when this system loses a component?",
+      "probing": "Reliability is one of the six published objectives and the most consistently reported gap between a strong hire and a no-hire. Reaching it only when asked is already late."
+    },
+    {
+      "level": 2,
+      "text": "How would you shard this, and what does that cost you?",
+      "probing": "Whether you can name the price of your own choice: cross-shard queries, hot keys, rebalancing."
+    },
+    {
+      "level": 2,
+      "text": "How do you know this system is healthy at three in the morning?",
+      "probing": "Dive Deep. Whether you name the alarm, the metric, and the audit log, or say 'we would monitor it'."
+    },
+    {
+      "level": 2,
+      "text": "Talk me through the read path end to end, including the caches.",
+      "probing": "Whether you can hold a full path in your head and narrate it in order without the listener losing the thread."
+    },
+    {
+      "level": 3,
+      "text": "Defend that choice. Why not the obvious alternative?",
+      "probing": "Whether you argue the trade-off or restate the choice louder. One interviewer put it directly: articulate the trade-off and you get full marks."
+    },
+    {
+      "level": 3,
+      "text": "That is a one-way door. Are you sure?",
+      "probing": "Whether you reason in Amazon's own decision language and can tell a reversible decision from an irreversible one — or whether you fold the moment you are pushed."
+    },
+    {
+      "level": 3,
+      "text": "Your cache tier goes down at peak. Walk me through the next ten minutes.",
+      "probing": "Failure thinking under pressure: thundering herd, what you shed, what degrades gracefully, who gets paged."
+    },
+    {
+      "level": 3,
+      "text": "This design handles a million requests a second. Why is that the wrong thing to have optimised?",
+      "probing": "The trap question. Amazon weights resiliency above raw throughput, and optimising QPS while ignoring failure reads as someone who has never been on call."
+    },
+    {
+      "level": 3,
+      "text": "What did you deliberately leave out of this design, and why?",
+      "probing": "Senior signal. Naming what you cut is stronger than covering everything shallowly."
+    },
+    {
+      "level": 3,
+      "text": "Tell me about a time you disagreed with a technical decision and had to commit to it anyway.",
+      "probing": "Have Backbone; Disagree and Commit, asked inside the technical round. They want the disagreement stated plainly and the commitment that followed it."
+    },
+    {
+      "level": 3,
+      "text": "You said 'we' three times. What did you personally do?",
+      "probing": "Ownership. Debriefs are evidence-based — an answer with no attributable action gives the interviewer nothing to write down."
+    },
+    {
+      "level": 4,
+      "text": "Take me through the hardest design decision you made in production and what it cost you.",
+      "probing": "A real trade-off with a loser, not a feature tour. The third layer — the rejected alternative and what you would change — is what the Bar Raiser is listening for."
+    },
+    {
+      "level": 4,
+      "text": "Walk me through an incident where something you built failed in production, start to finish.",
+      "probing": "The answer this round most wants to hear. Your decision, your fix, what changed permanently. Not one where you were a bystander."
+    },
+    {
+      "level": 4,
+      "text": "Tell me about a system you inherited that was broken.",
+      "probing": "What was actually broken versus what you were told was broken, and how you found the difference."
+    },
+    {
+      "level": 4,
+      "text": "Describe a time you dug into a metric that did not match what people were telling you.",
+      "probing": "Dive Deep, verbatim: leaders are sceptical when metrics and anecdote differ. They want the discrepancy, the digging, and what you found."
+    }
+  ],
+  "briefing": {
+    "headline": "Amazon is not scoring your architecture. It is scoring whether you scope before you draw, design for failure before you design for scale, and sound like the owner of the thing you just described.",
+    "format": "Four 55-minute interviews for SDE II, five for SDE III, with at least one on software systems design. The design conversation runs 45-60 minutes and is explicitly two-way — the interviewer questions your design while you question the problem. Each round is mixed: expect 15-30 minutes of behavioural questions tied to Leadership Principles before the technical work, because Amazon scores them inside the technical round rather than in a separate block. One interviewer is a Bar Raiser from outside the hiring team whose veto is final, and you will not be told which one.",
+    "whyTheyAsk": [
+      {
+        "theme": "\"Design X\", with no scope given",
+        "why": "Whether you ask before you draw. Waiting to be given the scope reads as a lack of ownership, and the first five minutes are scored."
+      },
+      {
+        "theme": "Requirements and estimation",
+        "why": "Whether you separate functional from non-functional and commit to numbers instead of hedging."
+      },
+      {
+        "theme": "API and data model",
+        "why": "Whether the schema follows from the access patterns or from habit."
+      },
+      {
+        "theme": "\"What happens when this dies?\"",
+        "why": "Reliability is one of the six published objectives and the most consistently reported gap between a strong hire and a no-hire."
+      },
+      {
+        "theme": "Pushing back on a choice you made",
+        "why": "Whether you argue the trade-off or restate the choice louder."
+      },
+      {
+        "theme": "Alarms, audit logs, reconciliation",
+        "why": "Dive Deep. Whether you have operated a system or only designed one."
+      },
+      {
+        "theme": "Behavioural questions mid-round",
+        "why": "The Leadership Principles that interviewer was assigned. Every one of the 16 has an owner somewhere in your loop."
+      }
+    ],
+    "rubric": [
+      {
+        "name": "Scoping before designing",
+        "weight": "high",
+        "good": "Opens with questions about users, scale, and what is out of scope, then states the scope back before drawing anything.",
+        "bad": "Starts describing components in the first thirty seconds, or waits to be told the scope."
+      },
+      {
+        "name": "Reliability — designed for failure",
+        "weight": "high",
+        "good": "Names what breaks, and the redundancy, circuit breaker, or degradation path, as part of the design rather than after it.",
+        "bad": "Optimises throughput and reaches failure handling only when asked, or not at all."
+      },
+      {
+        "name": "Trade-off articulation",
+        "weight": "high",
+        "good": "Names both options, picks one, and says what that choice costs.",
+        "bad": "Asserts a choice with no alternative named, or lists options without choosing one."
+      },
+      {
+        "name": "Ownership language",
+        "weight": "medium",
+        "good": "Says what I decided and why, and reasons in one-way versus two-way doors.",
+        "bad": "Narrates a team's work as \"we\" so nothing is attributable, or hedges every decision."
+      },
+      {
+        "name": "Structured narration",
+        "weight": "medium",
+        "good": "Talks continuously through the reasoning so the interviewer can follow and steer.",
+        "bad": "Long silences, or jumping between layers so the listener loses the thread."
+      },
+      {
+        "name": "Operational depth",
+        "weight": "medium",
+        "good": "Names the alarm, the metric, the audit log, the reconciliation path.",
+        "bad": "\"We'd monitor it\" with nothing specific behind it."
+      }
+    ],
+    "strongAnswer": [
+      "Asks before it draws, and states the scope back before designing.",
+      "Leads with failure: what breaks, and what happens when it does.",
+      "Names the trade-off, picks a side, and says what that side costs.",
+      "Says \"I decided\" about your own decisions, with the reason attached.",
+      "Narrates continuously, so the interviewer can steer rather than guess.",
+      "On behavioural questions: a specific situation, with metrics or data where they exist."
+    ],
+    "weakAnswer": [
+      "Jumps to components before establishing the high-level design.",
+      "Designs for scale and treats resiliency as a closing footnote.",
+      "Waits for the interviewer to set the scope.",
+      "Stops at the STAR story, with no reasoning behind the decision and no hindsight.",
+      "Answers a behavioural question hypothetically when a specific example was asked for.",
+      "Narrates a team's work with no attributable action of your own in it."
+    ],
+    "traps": [
+      {
+        "trap": "You will prepare this as a technical round, and it is not one — Leadership Principles are scored inside it.",
+        "instead": "Have 10-12 specific stories ready, and expect 15-30 minutes of them before you touch the design."
+      },
+      {
+        "trap": "You do not know which interviewer is the Bar Raiser, and theirs may never open a code editor.",
+        "instead": "Assume every interviewer is the one with the veto, and hold the same standard in the round that feels like a formality."
+      },
+      {
+        "trap": "Scale is the seductive wrong answer — optimising throughput while ignoring failure reads as someone who has never been on call.",
+        "instead": "Say what breaks before you say how fast it goes."
+      },
+      {
+        "trap": "The third layer is missing: most candidates prepare the story, almost none the reasoning behind the decision or what they would change.",
+        "instead": "For every story, rehearse the decision you made, the alternative you rejected, and the one thing you would do differently."
+      },
+      {
+        "trap": "\"We\" produces no evidence, and debriefs are evidence-based.",
+        "instead": "Say \"I\" about your own work, even when the work was a team's."
+      }
+    ],
+    "prepPlan": [
+      "Paste your real background into the Notes field — the systems you have operated, with rough numbers. The coach will not invent a fact you have not given it.",
+      "Write down which level you are interviewing at. L4 gets bounded problems; L5 is expected to handle sharding, replication and failure modes; L6+ is expected to drive an ambiguous prompt.",
+      "Pick 10-12 stories and map them across the 16 Leadership Principles. Note which principles have no story yet — those are the gaps.",
+      "For your three strongest stories, write the third layer: the decision, the rejected alternative, and what you would change.",
+      "Have one incident ready where something you built failed in production, and what changed permanently afterwards.",
+      "Drill these questions one at a time. Each is a 90-150 second spoken unit of the round, not the whole round."
+    ],
+    "sources": [
+      {
+        "title": "Amazon — SDE II Interview Prep",
+        "url": "https://amazon.jobs/content/en/how-we-hire/sde-ii-interview-prep",
+        "supports": "Four 55-minute interviews; the six design objectives (Practicality, Accuracy, Efficiency, Reliability, Optimization, Scalability); Leadership Principles assigned per interviewer; STAR; metrics."
+      },
+      {
+        "title": "Amazon — SDE III Interview Prep",
+        "url": "https://amazon.jobs/content/en/how-we-hire/sde-iii-interview-prep",
+        "supports": "Five 55-minute interviews at SDE III, against the same six objectives."
+      },
+      {
+        "title": "Amazon — Leadership Principles",
+        "url": "https://www.amazon.jobs/content/en/our-workplace/leadership-principles",
+        "supports": "The 16 principles and their official wording, including Dive Deep's 'sceptical when metrics and anecdote differ'."
+      },
+      {
+        "title": "Exponent — Amazon System Design Interview (2026)",
+        "url": "https://www.tryexponent.com/blog/amazon-system-design-interview",
+        "supports": "45-60 minute round; phase order; resiliency weighted above scale; Leadership Principles scored inside the technical round; one-way versus two-way door language."
+      },
+      {
+        "title": "SpaceComplexity — Amazon Onsite Interview Loop",
+        "url": "https://spacecomplexity.ai/blog/amazon-onsite-interview",
+        "supports": "Per-level design expectations; the unannounced Bar Raiser and the final veto; the three layers of depth; evidence-based debriefs."
+      },
+      {
+        "title": "DesignGurus — Amazon System Design Mock Interview Guide",
+        "url": "https://www.designgurus.io/blog/amazon-system-design-mock-interview-preparation-guide",
+        "supports": "Clarifying questions and failure modes as the differentiators between strong-hire and no-hire feedback."
+      },
+      {
+        "title": "Topalupu — Amazon SDE Interview 2026",
+        "url": "https://www.topalupu.com/blog/amazon-sde-interview-2026",
+        "supports": "Design for failure, talk trade-offs aloud, sound like an owner; alarms, audit logs and reconciliation expected."
+      }
+    ]
+  }
+}

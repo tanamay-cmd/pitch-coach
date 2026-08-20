@@ -1,0 +1,135 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Pitch Coach prep pack",
+  "description": "Written by the phase 3 agent to scenarios/<id>/pack.json. Validated on load by src/lib/scenarios.ts; a pack that fails is skipped with the offending field named in the app.",
+  "type": "object",
+  "required": ["label", "blurb", "mode", "topic", "targetSeconds", "greenZoneSeconds", "notes", "questions"],
+  "additionalProperties": false,
+  "properties": {
+    "label": {
+      "type": "string",
+      "description": "Button-length name, e.g. 'Amazon — system design'."
+    },
+    "blurb": {
+      "type": "string",
+      "description": "Two sentences: what this round is, and what it scores you on."
+    },
+    "mode": {
+      "enum": ["interview", "impromptu", "pitch", "script"],
+      "description": "Which app mode this pack practises."
+    },
+    "topic": {
+      "type": "string",
+      "description": "Goes in the Topic box. Names the company, role, and seniority."
+    },
+    "targetSeconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Where an answer is running long. From the dossier's timing finding."
+    },
+    "greenZoneSeconds": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "Where you want to land. Roughly 0.8 x targetSeconds."
+    },
+    "notes": {
+      "type": "string",
+      "description": "Becomes the Notes field, which the coach treats as ground truth. A template for the candidate's own material — never a real person's details."
+    },
+    "researchedOn": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "ISO date the research ran. Shown in the app so a stale pack reads as stale."
+    },
+    "questions": {
+      "type": "array",
+      "minItems": 1,
+      "description": "12-20 questions, weighted toward levels 2 and 3.",
+      "items": {
+        "type": "object",
+        "required": ["level", "text", "probing"],
+        "additionalProperties": false,
+        "properties": {
+          "level": {
+            "enum": [1, 2, 3, 4],
+            "description": "1 warm-up, 2 real, 3 curveball, 4 story rep."
+          },
+          "text": {
+            "type": "string",
+            "description": "Asked the way a person says it. One clause, no preamble, never two questions joined by 'and'."
+          },
+          "probing": {
+            "type": "string",
+            "description": "What the asker is really testing, in one sentence."
+          }
+        }
+      }
+    },
+    "briefing": {
+      "type": "object",
+      "description": "The phase 2 report. Its rubric is injected into the coaching prompt, so takes are scored against these dimensions.",
+      "required": ["headline", "format", "whyTheyAsk", "rubric", "strongAnswer", "weakAnswer", "traps", "prepPlan", "sources"],
+      "additionalProperties": false,
+      "properties": {
+        "headline": { "type": "string", "description": "One sentence on what this round is really testing." },
+        "format": { "type": "string", "description": "Length, who is in the room, how it opens, where it sits in the loop." },
+        "whyTheyAsk": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["theme", "why"],
+            "additionalProperties": false,
+            "properties": {
+              "theme": { "type": "string", "description": "A question archetype from the dossier." },
+              "why": { "type": "string", "description": "What that archetype is really testing." }
+            }
+          }
+        },
+        "rubric": {
+          "type": "array",
+          "minItems": 1,
+          "description": "4-6 dimensions. Named the way the round names them.",
+          "items": {
+            "type": "object",
+            "required": ["name", "weight", "good", "bad"],
+            "additionalProperties": false,
+            "properties": {
+              "name": { "type": "string" },
+              "weight": { "enum": ["high", "medium", "low"], "description": "'high' means failing it fails the round." },
+              "good": { "type": "string", "description": "Observable in sixty seconds of speech." },
+              "bad": { "type": "string", "description": "A specific failure with a shape, not the absence of 'good'." }
+            }
+          }
+        },
+        "strongAnswer": { "type": "array", "items": { "type": "string" }, "description": "Behaviours, not qualities." },
+        "weakAnswer": { "type": "array", "items": { "type": "string" } },
+        "traps": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["trap", "instead"],
+            "additionalProperties": false,
+            "properties": {
+              "trap": { "type": "string", "description": "The losing move, stated so the candidate recognises themselves doing it." },
+              "instead": { "type": "string", "description": "The concrete replacement, in words they could say." }
+            }
+          }
+        },
+        "prepPlan": { "type": "array", "items": { "type": "string" }, "description": "Ordered steps doable before the camera opens." },
+        "sources": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["title", "url", "supports"],
+            "additionalProperties": false,
+            "properties": {
+              "title": { "type": "string" },
+              "url": { "type": "string", "pattern": "^https?://", "description": "Must have been fetched. Never cite an unread source." },
+              "supports": { "type": "string", "description": "One line on what this source established." }
+            }
+          }
+        }
+      }
+    }
+  }
+}

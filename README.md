@@ -4,16 +4,46 @@ Practice speaking on camera and get scored on what you actually said. Four modes
 **Interview**, **Impromptu**, **Pitch**, **Script** — each driven by your own topic and
 your own knowledge base, with Claude acting as the coach.
 
-Successor to the single-file `pitch-coach.html` on the Desktop: same core loop (camera +
-mic + 60-second timer + live transcript), but the questions and the coaching are now
-generated for whatever topic you point it at, and the whole thing deploys as a web app.
+It also researches the round for you. Point the prep agents at *"system design interview at
+Amazon"* and they read what that round actually is, write you a briefing on the rubric and the
+traps, and generate a practice pack — so the score you get is against the real bar rather than
+a generic one.
 
 ---
 
-## The loop
+## Two halves
 
-1. Pick a mode and type a topic — a role, a company, a subject, anything.
-2. Optionally load a knowledge base: paste notes, or upload your resume / the JD / a spec.
+**Prep** happens in Claude Code, once per scenario. **Practice** happens in the browser, every
+day.
+
+```
+  /prep system design interview at Amazon        ← Claude Code, once
+        │
+        ├─ 1. research   web search + fetch  ─▶  scenarios/<id>/research.md
+        ├─ 2. briefing   the report          ─▶  scenarios/<id>/briefing.md
+        └─ 3. questions  the pack            ─▶  scenarios/<id>/pack.json
+                                                        │
+  npm run dev                                           ▼          ← browser, daily
+        └─ Briefing tab   read the report: rubric, good vs bad, traps
+           Load pack      answer on camera ─▶ playback ─▶ coaching
+                          scored against the researched rubric
+```
+
+The app never does the research. It reads what the agents wrote to disk — so generating a
+scenario needs Claude Code, and using one needs nothing but `npm run dev`.
+
+See [`agents/README.md`](agents/README.md) for the pipeline and
+[`scenarios/README.md`](scenarios/README.md) for the pack format. One worked example ships in
+[`scenarios/amazon-system-design/`](scenarios/amazon-system-design/).
+
+---
+
+## The practice loop
+
+1. Pick a mode and type a topic — or load a prep pack, which sets the mode, topic, timing
+   and questions in one click.
+2. Load a knowledge base: paste notes, or upload your resume / the JD / a spec. The coach
+   treats this as ground truth and will not invent a fact you have not given it.
 3. **Get questions** — Claude writes questions specific to your topic and material.
 4. **Start answering** — camera opens, timer runs, transcript builds live.
 5. **Stop** — watch it back, fix any mis-heard words in the transcript.
@@ -48,7 +78,8 @@ If neither exists the API returns `428` and the app quietly falls back to local 
 ## Run it locally
 
 ```bash
-cd ~/Projects/pitch-coach
+git clone https://github.com/birlaaishwarya11/pitch-coach.git
+cd pitch-coach
 npm install
 cp .env.example .env.local     # optional — add ANTHROPIC_API_KEY, or just use Settings
 npm run dev                    # http://localhost:3000
@@ -139,27 +170,55 @@ Edits save to your browser and can be reset per-prompt or all at once. Available
 (`{{topic}}`, `{{knowledge}}`, `{{transcript}}`, `{{metrics}}`, `{{formula}}`, …) are listed
 under the editor, and unknown ones get flagged rather than silently rendering as empty.
 
-A mode-specific rubric is appended to the coach system prompt automatically — see
-`MODE_RUBRICS` in [`src/lib/prompts.ts`](src/lib/prompts.ts) to change what each mode scores.
+Two rubrics reach the coach through template variables, so the Prompt Studio shows the whole
+prompt rather than hiding an appended tail:
+
+- **`{{mode_rubric}}`** — the mode's built-in dimensions (`MODE_RUBRICS` in
+  [`src/lib/prompts.ts`](src/lib/prompts.ts)).
+- **`{{rubric}}`** — the researched rubric from a loaded scenario pack, which states that it
+  overrides the generic dimensions. Empty when no researched pack is loaded.
+
+This is what connects prep to practice: the dimensions the research found are the dimensions
+your take is scored on, by name and by weight.
+
+A prompt you customised before these slots existed has neither, so anything the template does
+not consume is appended instead — upgrading never silently drops your scoring dimensions.
 
 ---
 
 ## Layout
 
 ```
+agents/                   the prep pipeline — three briefs run in Claude Code
+├─ README.md              how the phases fit together and what they may not do
+├─ 01-research.md         phase 1: search, fetch, bucket every claim by evidence
+├─ 02-briefing.md         phase 2: the candidate-facing report and the rubric
+├─ 03-questions.md        phase 3: the questions and the pack
+└─ pack.schema.json       the contract pack.json must satisfy
+
+scenarios/                generated packs, one folder each
+└─ amazon-system-design/  research.md · briefing.md · pack.json
+
+docs/adr/                 why things are the way they are
+
 src/
 ├─ app/
-│  ├─ api/coach/route.ts   Anthropic proxy: key resolution, structured JSON, typed errors
-│  ├─ layout.tsx           metadata + viewport (iOS-safe)
+│  ├─ api/coach/route.ts      Anthropic proxy: key resolution, structured JSON, typed errors
+│  ├─ api/scenarios/route.ts  reads scenarios/ from disk, validated, per request
+│  ├─ layout.tsx              metadata + viewport (iOS-safe)
 │  └─ page.tsx
 ├─ components/
 │  ├─ CoachApp.tsx         orchestration + state
 │  ├─ Recorder.tsx         video preview, playback, timer bar
 │  ├─ FeedbackPanel.tsx    score, breakdown, fixes, model answer
+│  ├─ BriefingPanel.tsx    the researched report: rubric, good vs bad, traps, sources
+│  ├─ PreviewPanel.tsx     the exact prompt being sent, fully substituted
 │  └─ SidePanels.tsx       Settings / Knowledge / Prompt Studio
 └─ lib/
    ├─ modes.ts             the four modes + fallback question banks
-   ├─ prompts.ts           editable templates + {{var}} rendering
+   ├─ packs.ts             built-in generic packs (no personal detail, by design)
+   ├─ scenarios.ts         loads + validates generated packs, naming the bad field
+   ├─ prompts.ts           editable templates + {{var}} rendering + the rubric block
    ├─ schemas.ts           JSON Schemas for guaranteed-parseable responses
    ├─ metrics.ts           local measurement (pace, fillers, structure, coverage)
    ├─ localCoach.ts        the no-key scorer + clipboard prompt builder
@@ -184,6 +243,10 @@ request is the question, your transcript, your topic, the measured metrics, and 
 knowledge base — sent to Anthropic and nowhere else. Settings, prompts, knowledge base, and
 take history live in `localStorage`; take history deliberately drops the media so it can't
 blow the storage quota.
+
+**Nothing about you goes in the repo.** Prep packs describe a *round*, never a person — their
+`notes` field is a template telling you what to paste in. Your résumé, your numbers, your visa
+situation, your comp: those go in the Notes field in your browser and stay there.
 
 ---
 
