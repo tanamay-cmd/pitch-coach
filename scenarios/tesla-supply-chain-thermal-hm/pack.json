@@ -1,0 +1,342 @@
+{
+  "label": "Tesla — supply chain HM",
+  "blurb": "The 30-45 minute hiring manager call, broken into the spoken units it is made of. Scores you on whether you can build a cost from the part rather than from the quote, whether you name the process before the price, and whether every saving you claim has your own verb attached to it.",
+  "mode": "interview",
+  "topic": "Tesla Supply Chain Manager, Thermal Systems — hiring manager round, second interview, [P3 / P4]. Should-cost from first principles weighted over relationship management.",
+  "targetSeconds": 120,
+  "greenZoneSeconds": 90,
+  "researchedOn": "2026-08-20",
+  "notes": "=== GROUND TRUTH (the coach may not invent anything outside this) ===\n\nReplace this whole block before you practise. The coach is only as specific as what you paste\nin, and there are no public Tesla part costs for it to fall back on — if you do not give it a\nnumber, it does not have one.\n\n- The commodities you have actually owned, and for each: the part, the process route it is made\n  by, the annual volume, and the annual spend.\n- One should-cost model you built yourself, with the real inputs: part mass and material grade,\n  the material price and the date or index it came from, cycle time, the machine rate you used\n  and where you got it, tooling cost and the volume it amortised over, scrap, freight, overhead,\n  margin. Then which of those inputs was softest, and why.\n- One negotiation: who the supplier was, the lever you created, what you were prepared to walk\n  away from, and the number that came out.\n- One cost reduction with the mechanism attached — resourcing, design change, tooling move,\n  re-indexing, consolidation — and the verb you personally performed.\n- One exchange with a design engineer: the spec or tolerance in dispute, the cost and yield\n  numbers you brought, what changed on the drawing.\n- One supplier crisis you owned, with the constraint you found and what you did about it.\n- The level you are targeting. This req's band spans P3 into P4, and levelling starts in this\n  conversation.\n- Your \"why Tesla\" hook: the specific thing about the thermal architecture or the cost position\n  you actually care about. Not sustainable energy in general.\n- Which case you would present at the panel round if you clear this one.\n- The acronyms you reach for under pressure (PPV, TCO, LTA, SCAR, APQP, VA/VE, MOQ, EAU), so\n  the coach can flag them when you use one without unpacking it.\n\n=== HOW TO USE THIS PACK ===\n\nThe real round is 30-45 minutes of two-way conversation with one person, on Teams with video\non. You cannot practise that alone into a webcam. What loses it is not the conversation, it is\nthe 90-120 second spoken units it is built from: a cost model narrated out of order, a saving\nwith no mechanism under it, a negotiation told as a relationship story, \"we\" where an \"I\"\nshould be.\n\nEach question below is one of those units. Drill them separately, then run the whole thing end\nto end with a human.\n\nTiming: 90 seconds is the green zone, 120 is the target. One documented exception — a\nshould-cost walkthrough is a build with steps, and 150-180 seconds is legitimate there. The\ncoach should not penalise length on the model-building questions; it should penalise a model\nthat is not actually being built.\n\nLater information updates the format: this specific round is understood to run as pure\nbehavioral Q&A — every question below is deliberately phrased as \"tell me about a time...\"\nrather than a hypothetical or a live build, including the should-cost question, which asks for\na model you already built and what it changed, not one built live on the call. Treat the\nearlier single 2024 candidate report of a live Excel sourcing assessment as a residual,\nlower-probability scenario worth one insurance rep — build one cost model in a blank\nspreadsheet, out loud, against a ten-minute timer — but not the primary prep target anymore.\nThe primary target is having five or six real stories polished enough to answer whichever\narchetype the question below happens to be dressed as.\n\n=== GAPS ===\n\nList what you cannot yet answer with a number, and keep the list where you can see it.\n\nThis round is decided in the drill-down, so the coach must call out hand-waving rather than\nscore around it. Specifically, say it plainly when a take contains:\n\n- A savings figure with no mechanism under it — a percentage or a dollar number with nothing\n  said about resourcing, design change, tooling, indexing or consolidation.\n- A cost claim with no machine rate, no material price, no cycle time, no tooling volume — a\n  benchmark or a year-on-year target presented as if it were a model.\n- \"We\" with no personal verb anywhere in the answer, so nothing in it is attributable.\n- \"I'd work with the supplier to understand their cost structure\", or any variant that hands\n  the supplier the job of writing the model.\n- An acronym used without being unpacked once.\n\nIf a claim needs a figure the notes above do not contain, the coach should name the missing\nfigure rather than accepting the claim.",
+  "questions": [
+    {
+      "level": 1,
+      "text": "Tell me about yourself.",
+      "probing": "The universal opener, and it is already scoring you. Whether you lead with the commodities and parts you actually own today, or default to a chronological resume narration with no throughline to this role."
+    },
+    {
+      "level": 1,
+      "text": "Tell me about the commodity you own today.",
+      "probing": "Whether you describe parts and how they are made, or retreat into programme codes, spend numbers and procurement shorthand against a standing company instruction not to."
+    },
+    {
+      "level": 1,
+      "text": "Why Tesla, why this team, why now?",
+      "probing": "Mission alignment with a technical hook. The reported failure is the generic sustainable-energy answer; the hooks here are the thermal architecture itself and a 1.4% operating margin on record Q2 2026 revenue, which is why the cost line is being staffed."
+    },
+    {
+      "level": 2,
+      "text": "Walk me through a should-cost model you built, and what it changed.",
+      "probing": "The signature question of this round, asked as a real instance rather than a live build. Whether you get from a physical part to a number without the supplier's help — mass at a stated material price, process route and cycle time at a stated machine rate, tooling over the volume it amortises across — and whether the model actually moved a decision or a negotiation, not just informed one."
+    },
+    {
+      "level": 2,
+      "text": "Tell me about a negotiation where you created the leverage yourself.",
+      "probing": "Whether you built the lever — second source qualified, volume commitment, tooling ownership, index-linked price, payment terms — or were handed one. \"Excellent negotiator\" is in Tesla's own req text."
+    },
+    {
+      "level": 2,
+      "text": "Tell me about a cost reduction you personally drove.",
+      "probing": "Cost-down attribution. The follow-up is always about mechanism rather than magnitude, so the number needs resourcing, a design change, a tooling move, a re-index or a consolidation attached to it."
+    },
+    {
+      "level": 2,
+      "text": "Tell me about a time a supplier told you they could not meet a sudden increase in demand. What did you do?",
+      "probing": "Whether you went to the constraint — which operation is the bottleneck, the braze furnace, the mould, the press — rather than to the relationship, and whether you actually stood up a second source under time pressure rather than just discussing one."
+    },
+    {
+      "level": 2,
+      "text": "Tell me about a time a design engineer wanted a tighter tolerance than your supplier could hold.",
+      "probing": "Whether you held a cost position against an engineer with numbers rather than competency language, and whether you knew where your authority ended. Tesla runs this triangle explicitly through its industrialization engineers."
+    },
+    {
+      "level": 2,
+      "text": "Tell me about a time you had to validate or push back on a price increase from a supplier.",
+      "probing": "The category-business-plan half of the job, tested as a real event rather than a policy recitation. With Section 232 restructured onto full customs value and an aluminium-heavy category exposed, whether you can tell a real cost pass-through from an opportunistic one, and what you actually did about it."
+    },
+    {
+      "level": 2,
+      "text": "Tell me about a time you took something that worked for you personally and scaled it so your whole team could use it.",
+      "probing": "A close cousin of the reported \"tell me about a time you raised the bar.\" Whether the value you created was a one-off win or something you turned into a repeatable capability for other people."
+    },
+    {
+      "level": 2,
+      "text": "If you get to the panel round, what would you present?",
+      "probing": "Whether you have already decided. The panel round is a candidate-chosen case presentation, and saying your case out loud here turns a screening call into a working conversation instead of treating this as the round before the real one."
+    },
+    {
+      "level": 3,
+      "text": "What machine rate did you use in that model?",
+      "probing": "The single question that separates a bottom-up model from a benchmark dressed up as one. A year-on-year percentage cannot produce a machine rate, and having no figure is the tell."
+    },
+    {
+      "level": 3,
+      "text": "Which input in that model do you trust least?",
+      "probing": "Whether you volunteer the softest assumption before being asked. The published pitfall list for should-cost models leads with unverified inputs, so naming yours is what converts a spreadsheet into judgement."
+    },
+    {
+      "level": 3,
+      "text": "You have said \"we\" the whole way through. What was your role specifically?",
+      "probing": "The reported Tesla rejection pattern, asked to your face. Every claim needs a verb you personally performed — \"I qualified the second source\", not \"the second source was qualified\"."
+    },
+    {
+      "level": 3,
+      "text": "That saving is a percentage. What is the mechanism underneath it?",
+      "probing": "Cost-down ownership under pressure. A number with no mechanism reads as a target someone else set, and the honest follow-up is what you personally negotiated, changed or signed."
+    },
+    {
+      "level": 3,
+      "text": "Tell me about a time you disagreed with someone and had to hold your position.",
+      "probing": "Whether the disagreement resolves on data and a stated boundary, or dissolves into relationship language. A company that has publicly reopened signed supplier agreements is listening for judgement, not just diplomacy."
+    },
+    {
+      "level": 4,
+      "text": "Take me through a supplier crisis you owned, from the first phone call to the fix.",
+      "probing": "A story rep with a constraint in the middle of it. What was actually broken versus what you were told was broken, what you personally decided, and what changed permanently afterwards."
+    },
+    {
+      "level": 4,
+      "text": "Walk me through a deal you re-cut after it had already been signed.",
+      "probing": "The story this house wants to hear. The lever you used, what you were prepared to walk away from, what the supplier conceded, and what you would not have done to get it."
+    },
+    {
+      "level": 4,
+      "text": "Tell me about the achievement you would put in Tesla's Evidence of Excellence field.",
+      "probing": "Reported, not confirmed, to be how this round opens. A hard problem, a quantified result, \"I\" rather than \"we\" — and none of the named weak words: passionate, detail-oriented, team player."
+    },
+    {
+      "level": 4,
+      "text": "Tell me about a time something did not go as planned, and what you would do differently now.",
+      "probing": "The self-awareness check most candidates aren't ready for. Whether the answer names a real misjudgement with a real consequence, or reaches for a disguised strength (\"I work too hard\")."
+    }
+  ],
+  "briefing": {
+    "headline": "This round is testing whether you can get from a physical part to a cost number without the supplier's help — and whether the savings you claim have your own verb attached to them.",
+    "format": "Thirty to forty-five minutes with the direct hiring manager, on Teams with video on. It is your second round — recruiter screen passed — and a candidate-chosen presentation to a panel follows if you clear it. Expect your background, the projects you would own, and 90-day expectations. Expect to be levelled inside it too: Tesla supply chain sits on a P-ladder and this req's band spans P3 into P4, so the conversation is partly about where you land. One thing worth an hour of preparation: a February 2024 Blind post from someone inside a Tesla GSM process says their first interview round was \"a live excel assessment round with hiring manager\" — an Excel-based sourcing exercise. That is one anecdote, from a poster who had not yet sat it, and no other source mentions it. But screen-share on Teams is one click, and the downside of being wrong in the other direction is severe. Do not walk in assuming this is only a chat about your background. How the round opens is not established by any source; the best guess — and it is a guess — is whatever you wrote in Tesla's \"Evidence of Excellence\" application field. Read all of the above knowing that Tesla publishes nothing about how it interviews. Every tesla.com/careers page the research tried returned 403, and so did every Glassdoor and NodeFlair page — which is where the dozen-odd Global Supply Manager candidate reports live. So the shape of the round rests on two Blind threads plus four commercial interview-prep blogs that agree with each other and may simply be copying each other. What is solid: Tesla's own job-description text recovered through job-board mirrors, Tesla's own on-record statement about how it treats signed supplier deals, the Munro teardown of the thermal assembly, and the 2026 tariff and Tesla-financials picture.",
+    "whyTheyAsk": [
+      {
+        "theme": "\"Walk me through a should-cost model you built\"",
+        "why": "The signature question. Whether you can go from a physical part to a number without the supplier's help — mass, grade, process route, cycle time, machine rate, tooling and the volume it amortises over, scrap, freight, margin — and then name your own model's weakest input. \"Advanced proficiency in should-cost modeling\" is a hard requirement in Tesla's own supply-chain req text."
+      },
+      {
+        "theme": "The negotiation war story",
+        "why": "\"Excellent negotiator\" is in the req verbatim. Whether you created leverage — second source, volume commitment, tooling ownership, index-linked pricing, payment terms — or were handed it, and whether you had a walk-away or split the difference."
+      },
+      {
+        "theme": "Capacity shock: \"double the forecast overnight\"",
+        "why": "Whether you go to the constraint — which operation is the bottleneck, the braze furnace, the mould, the press — rather than to the relationship, and whether you have actually stood up a second source under time pressure. (The Tesla-specific wording of this one reached the dossier only as a search summary of a Glassdoor page that would not open. Treat the archetype as real and the wording as unverified.)"
+      },
+      {
+        "theme": "Working across SIEs and Design Engineers",
+        "why": "Tesla's own Supplier Industrialization Engineer job description has SIEs guiding Design Engineers on design-for-manufacture against supplier fabrication limits, running change control and issuing corrective actions. Supply chain sits inside that triangle. Whether you can hold a cost position against an engineer who wants a tighter tolerance — and whether you know where your authority ends."
+      },
+      {
+        "theme": "Cost-down ownership",
+        "why": "Whether you drove a number down and can attribute it. The follow-up is about mechanism, not magnitude: resourcing, design change, tooling move, index renegotiation, consolidation."
+      },
+      {
+        "theme": "\"Why Tesla, why this team, why now\"",
+        "why": "Mission alignment with a technical hook. The reported failure is the generic sustainable-energy answer. For this role the hook is the thermal architecture itself — and the fact that Q2 2026 operating margin was 1.4% on record revenue, which is why the cost line is being staffed."
+      },
+      {
+        "theme": "Whatever you wrote in Evidence of Excellence",
+        "why": "Tesla's application asks for concrete, verifiable proof of exceptional achievement instead of a cover letter, and the same phrase (\"evidence of exceptional ability\") is written into the requirements. Reported, not confirmed, to be the opening prompt."
+      }
+    ],
+    "rubric": [
+      {
+        "name": "Should-cost, built from first principles",
+        "weight": "high",
+        "good": "Builds the number in front of you in order — part mass at a stated material price, process route and cycle time at a stated machine rate, tooling divided by the volume it amortises over, then scrap, freight, overhead, margin — and says where each input came from.",
+        "bad": "Answers a cost question with a year-on-year percentage or a benchmark target (\"we took 5% out of the category\") and, asked what machine rate the number rests on, has no figure."
+      },
+      {
+        "name": "Process route and tooling",
+        "weight": "high",
+        "good": "Names how the part is actually made before pricing it — moulded, brazed, extruded, forged, friction-stir welded — and links one process choice to one cost driver, such as what a tighter tolerance does to tooling and inspection time.",
+        "bad": "Talks about the commodity only in commercial terms — price, lead time, minimum order quantity — or says \"I'd work with the supplier to understand their cost structure,\" which hands the supplier the job of writing your model."
+      },
+      {
+        "name": "Cost-down ownership",
+        "weight": "high",
+        "good": "Gives the saving as a number and attaches the mechanism that produced it — resourcing, a design change, moving the tool, re-indexing the price, consolidating volume — with a verb the speaker personally performed.",
+        "bad": "Narrates a team's result as \"we reduced spend by 12%\" without ever saying what they personally negotiated, changed or signed, so the only honest follow-up is \"what was your role specifically?\""
+      },
+      {
+        "name": "Negotiation leverage and walk-away",
+        "weight": "medium",
+        "good": "Names the lever they created — second source qualified, volume commitment, tooling ownership, index-linked price, payment terms — states what they were prepared to walk away from, and says what the supplier conceded.",
+        "bad": "Tells the negotiation as a relationship story — trust, meeting in the middle, keeping the partnership healthy — with no lever, no walk-away and no number; or treats reopening a signed price as something one simply does not do."
+      },
+      {
+        "name": "Cross-functional pull with Engineering",
+        "weight": "medium",
+        "good": "Reconstructs one exchange with a design engineer — the spec or tolerance in dispute, the cost and yield numbers brought to the design review, what changed on the drawing — rather than summarising it.",
+        "bad": "Reaches for competency language (\"I partner closely with engineering\", \"strong stakeholder management\") with no drawing, spec, number or decision named anywhere in the answer."
+      },
+      {
+        "name": "Plain words, no acronyms",
+        "weight": "low",
+        "good": "Unpacks each term once — \"PPV, which is just the price change year over year\" — then uses it freely, and describes parts in words rather than in programme codes.",
+        "bad": "Runs an entire answer in procurement shorthand — PPV, TCO, LTA, SCAR, APQP, VA/VE, MOQ, EAU — so a listener outside procurement could not repeat back what was actually done."
+      }
+    ],
+    "strongAnswer": [
+      "Builds the cost out loud in order, and says which input is a quote and which is a regional average.",
+      "Names the manufacturing process before the commercial term: \"it's a moulded nylon manifold, so the tool is where the money is.\"",
+      "Volunteers the model's weakest assumption before being asked — the published pitfall list for should-cost models leads with unverified inputs.",
+      "Says \"I\" with the decision attached: what I put in the RFQ, what I refused, what I signed.",
+      "Answers \"why now\" with Tesla's own numbers — record revenue in Q2 2026 but 1.4% operating margin and capex up 142% — and with Section 232 sitting on an aluminium-heavy category.",
+      "Unpacks each acronym once, then uses it."
+    ],
+    "weakAnswer": [
+      "Gives a year-on-year percentage when asked for a model, and cannot say what machine rate it rests on.",
+      "Says \"I'd work with the supplier to understand their cost structure\" — which is a request for the supplier to write your model for you, and the opposite of the job.",
+      "Frames every supplier story around preserving the relationship, at a company that has publicly reopened signed agreements and called it standard.",
+      "Runs on procurement shorthand against a standing, twice-issued company instruction not to.",
+      "Narrates a team result as \"we reduced X by 40%\" and waits for \"what was your role specifically?\" — by which point the answer has already lost something.",
+      "Answers \"why Tesla\" with sustainable energy and nothing about the thermal architecture or the cost pressure."
+    ],
+    "traps": [
+      {
+        "trap": "You will prepare this as the behavioural round and a spreadsheet may appear. One 2024 candidate report has the Tesla GSM first round with the hiring manager being a live Excel sourcing assessment. One anecdote — but video is on, screen-share is one click, and the failure mode if it happens is going silent while you think.",
+        "instead": "Build one cost model in a blank spreadsheet, out loud, in ten minutes, before the call. If it happens, narrate every cell: \"material first — mass times price — then I'll add the process time.\""
+      },
+      {
+        "trap": "Bringing a top-down cost story to a bottom-up question. Year-on-year percentage savings sound like a good answer everywhere else in procurement and sound like an evasion here. The JD asks for models \"generated from understanding of manufacturing process.\" The tell is that you cannot answer \"what machine rate did you use?\"",
+        "instead": "\"Mass was 1.8 kg of 3003 at the aluminium price that quarter, the cycle was 90 seconds on a press I rated at X an hour, the tool amortised over 400,000 units — that gets me to Y, and the quote was Z.\""
+      },
+      {
+        "trap": "The partnership-only negotiator. In July 2018 Tesla asked suppliers to return a meaningful amount of money already paid, and said on the record: \"Negotiation is a standard part of the procurement process.\" A candidate whose entire philosophy is relationship preservation is answering a different company's question.",
+        "instead": "Have one story where you reopened or re-cut a deal, with the lever you used and what you were prepared to walk away from — and say plainly what you would not do to a supplier, so the posture reads as judgement rather than aggression."
+      },
+      {
+        "trap": "\"We.\" The reported Tesla rejection pattern is describing team outcomes rather than personal contribution, with \"what was your role specifically?\" as the follow-up that exposes it. Tesla's own Evidence-of-Excellence guidance says to use \"I\", not \"we\", and attach a number.",
+        "instead": "Every claim gets a verb you personally performed. \"I qualified the second source\", not \"the second source was qualified.\""
+      },
+      {
+        "trap": "Treating this as the round before the real one. The panel presentation is the visible round, but this conversation is where your presentation case gets chosen and where levelling starts.",
+        "instead": "Decide before the call which case you would present, and say it out loud here: \"if I get to the panel, the thing I'd walk you through is X.\" A screening call becomes a working conversation."
+      }
+    ],
+    "prepPlan": [
+      "Paste your real background into the app's Notes field — the parts you have actually sourced, the processes behind them, and the numbers. The coach will not invent a fact you have not given it.",
+      "Rebuild one should-cost model on paper: pick a part you personally sourced and write mass × material price, cycle time × machine rate, tooling ÷ annual volume, scrap, freight, overhead, margin. Then mark which input is softest. Volunteering that is the move that converts a spreadsheet into judgement.",
+      "Do it once in a live spreadsheet, narrating continuously, against a ten-minute timer. One anecdote says you may have to; an hour buys the insurance.",
+      "Pick one negotiation and write down three things: the lever you created, the walk-away you held, and the number that came out.",
+      "Learn the thermal parts and how they are made, from the two Munro teardown write-ups in the sources: the octovalve (eight ports, five positions, ~270° rotation), the moulded nylon coolant manifold, the semi-solid-forged aluminium refrigerant super-manifold with integrated accumulator, made with friction-stir welding and EDM, the brazed plate, the extruded chiller, R-1234yf refrigerant. You should be able to name a part and its process unprompted.",
+      "Write two sentences for \"why now\" — Section 232 as restructured on 6 April 2026 (tiered 50/25/15%, now assessed on full customs value rather than metal content, 25% on auto parts, USMCA-qualifying parts exempt) against an aluminium-heavy category, and Tesla's Q2 2026 margin — and decide there which case you will present at the panel round, so you can say it in this call."
+    ],
+    "sources": [
+      {
+        "title": "Tesla JD mirror — Supply Chain Manager, CapEx",
+        "url": "https://simplify.jobs/p/0207003c-96b2-47bd-b7f9-6be541ff31e4/Capital-Expenditure-Supply-Chain-Manager",
+        "supports": "Tesla's own words: \"should-cost models to perform rigorous cost analysis of supplier proposals\"; \"advanced proficiency in should-cost modeling, cost breakdown analysis, and total cost of ownership frameworks\"; complex commercial negotiations; \"evidence of exceptional ability\" written into the requirements"
+      },
+      {
+        "title": "Tesla JD mirror — Global Supply Manager",
+        "url": "https://www.wayup.com/i-Manufacturing-j-Tesla-Motors-531471381173647/",
+        "supports": "Tesla's own words on the Supply Chain Organization: supply assurance, pricing, flexibility, quality, delivery; the GSM builds relationships with engineering teams and key suppliers; \"fast moving, dynamic environment\""
+      },
+      {
+        "title": "Tesla JD mirror — Supplier Industrialization Engineer",
+        "url": "https://tesla.veteran-hiring.com/job-detail/supplier-industrialization-engineer-pcb-224502",
+        "supports": "The SIE/DE working model: design-for-manufacture guidance to Design Engineers against supplier fabrication limits, APQP/PPAP with tier 2s, corrective actions, change control — the function supply chain works against"
+      },
+      {
+        "title": "Tesla JD mirror — Supply Chain Manager, responsible sourcing",
+        "url": "https://www.terra.do/climate-jobs/job-board/Supply-Chain-Managers-Tesla-8400558/",
+        "supports": "A sibling Tesla SCM req at $104,000–$156,000 plus stock; shows band overlap and that not every Tesla SCM req is a cost-model role"
+      },
+      {
+        "title": "Electrek — Tesla turns to suppliers to reduce cost",
+        "url": "https://electrek.co/2018/07/23/tesla-suppliers-reduce-cost-become-profitable/",
+        "supports": "Tesla on the record: \"Negotiation is a standard part of the procurement process\"; the 2018 memo asking suppliers to return money already paid; \"fewer than 10 suppliers\""
+      },
+      {
+        "title": "Startup Archive — Musk on first principles and battery cost",
+        "url": "https://www.startuparchive.org/p/elon-musk-explains-first-principles-thinking-and-uses-it-to-predict-80-decline-in-battery-prices",
+        "supports": "The shape of the reasoning this round listens for: constituent materials priced at spot, ~$80/kWh against a ~$600/kWh pack price, the gap identified as a manufacturing problem"
+      },
+      {
+        "title": "Musk — \"Acronyms Seriously Suck\" (full email text)",
+        "url": "https://gist.github.com/klaaspieter/12cd68f54bb71a3940eae5cdd4ea1764",
+        "supports": "The standing instruction against made-up acronyms as an impediment to communication — reissued to Tesla staff in 2018"
+      },
+      {
+        "title": "Precoro — Should-cost model guide",
+        "url": "https://precoro.com/blog/should-cost-model-how-to-build-calculate-and-negotiate/",
+        "supports": "The should-cost element structure and formula, data sources, and the named pitfalls: unverified inputs, over-aggregated cost buckets, stale models"
+      },
+      {
+        "title": "E-Mobility Engineering — Tesla octovalve (Munro teardown)",
+        "url": "https://www.emobility-engineering.com/tesla-octovalve/",
+        "supports": "Heat pump assembly contents; polymer coolant manifold and aluminium refrigerant super-manifold; brazing, extrusion, polymer moulding; \"three main parts instead of the hundreds\"; eight ports, five positions, ~270° rotation"
+      },
+      {
+        "title": "VASA — Inside Tesla's octovalve",
+        "url": "https://vasa.org.au/inside-teslas-octovalve/",
+        "supports": "Moulded nylon coolant manifold; semi-solid-forged aluminium refrigerant manifold with integrated accumulator; friction-stir welding and EDM; ethylene-glycol HOAT, dual electric pumps, single radiator with active shutters"
+      },
+      {
+        "title": "ElectronsX — EV thermal system supply chain",
+        "url": "https://www.electronsx.com/thermal-system-supply-chain.html",
+        "supports": "The tier-1 landscape (Denso, Valeo, MAHLE, Hanon, BorgWarner, Modine, Dana, Sanhua); module-level integration as the direction of travel; R-1234yf; \"electric compressor production is tight relative to the surge in heat pump adoption\""
+      },
+      {
+        "title": "Global Trade Alert — Section 232 metals restructuring",
+        "url": "https://globaltradealert.org/blog/s232-metals-restructuring-april-2026",
+        "supports": "From 6 April 2026: tiered 50/25/15%, and the duty assessed on full customs value rather than metal content — which raises effective rates on low-metal-content assemblies"
+      },
+      {
+        "title": "TariffsTool — Section 232 steel and aluminium guide",
+        "url": "https://www.tariffstool.com/guides/section-232-tariffs-steel-aluminum-guide",
+        "supports": "Current rates including 25% on autos and auto parts; stacking rules; \"largely unavoidable by switching countries\"; USMCA and foreign-trade-zone mitigation"
+      },
+      {
+        "title": "EVwire — Tesla Q2 2026 earnings recap",
+        "url": "https://evwire.com/p/tesla-q2-2026-earnings-results",
+        "supports": "Revenue $28.24B (+26%), operating income down 57% to $398M, operating margin 1.4%, capex $5.79B (+142%), free cash flow −$1.09B — the pressure this hire sits under"
+      },
+      {
+        "title": "Blind — \"Tesla GSM interview\" (Feb 2024)",
+        "url": "https://www.teamblind.com/post/tesla-gsm-interview-ta3hofyp",
+        "supports": "The single report that the first GSM interview round with the hiring manager was a live Excel-based sourcing assessment — scheduled, not experienced, and uncorroborated"
+      },
+      {
+        "title": "Blind — Tesla GSM final round panel (Dec 2021)",
+        "url": "https://www.teamblind.com/post/Tesla-tips-needed-final-round-panel-interview-for-global-supply-manager-qveopbKj",
+        "supports": "The round after this one: a candidate-chosen case presentation to a panel, then Q&A; \"choose something where you played a major role\""
+      },
+      {
+        "title": "Blind — Tesla P3 and P4 supply chain salary",
+        "url": "https://www.teamblind.com/post/tesla-p3-and-p4-supply-chain-salary-j6bnrk2p",
+        "supports": "Tesla supply chain sits on a P-ladder, and P3/P4 is where this req's band lands — so levelling happens inside the loop"
+      },
+      {
+        "title": "Leon Consulting — Tesla interview process",
+        "url": "https://leonstaff.com/blogs/tesla-interview-process/",
+        "supports": "Hiring-manager call at 30–45 minutes, early in the loop, covering team fit, business unit and 90-day expectations; the Evidence of Excellence field. Interview-prep blog, unattributed"
+      },
+      {
+        "title": "TechPrep — Tesla's interview process",
+        "url": "https://www.techprep.app/blog/tesla-interview-process",
+        "supports": "Corroborates the 30–45 minute hiring-manager call positioned before technical screening, and that no published scorecard exists. Interview-prep blog"
+      },
+      {
+        "title": "Exponent — Get a job at Tesla",
+        "url": "https://www.tryexponent.com/blog/tesla-interview-process",
+        "supports": "Hiring-manager call on past projects, handling ambiguity and day-to-day fit; themes of speed, tenacity, practical problem-solving, low ego. Interview-prep blog"
+      },
+      {
+        "title": "Leon Consulting — Evidence of Excellence examples",
+        "url": "https://leonstaff.com/blogs/tesla-evidence-of-excellence-examples-2026/",
+        "supports": "What Tesla wants in that field: a hard problem, a quantified result, \"I\" not \"we\"; named weak words — passionate, detail-oriented, team player. Interview-prep blog"
+      },
+      {
+        "title": "InterviewPrep — commodity manager interview questions",
+        "url": "https://interviewprep.org/commodity-manager-interview-questions/",
+        "supports": "The role-generic archetypes and what each tests: total cost of ownership and should-cost, negotiation, supplier crisis, cross-functional coordination, cost reduction. Generic to the role, not Tesla-specific"
+      }
+    ]
+  }
+}

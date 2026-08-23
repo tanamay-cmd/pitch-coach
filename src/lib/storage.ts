@@ -17,7 +17,7 @@ export const DEFAULT_SETTINGS: Settings = {
   greenZoneSeconds: 45,
   recognitionLang: 'en-US',
   mirror: true,
-  recordVideo: true,
+  recordVideo: false,
 }
 
 function read<T>(key: string, fallback: T): T {

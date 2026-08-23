@@ -137,10 +137,12 @@ export function SettingsPanel({
           />
           Record video (uncheck for audio-only)
         </label>
-        <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" checked={settings.mirror} onChange={(e) => set('mirror', e.target.checked)} />
-          Mirror the preview
-        </label>
+        {settings.recordVideo && (
+          <label className="flex items-center gap-2 text-sm">
+            <input type="checkbox" checked={settings.mirror} onChange={(e) => set('mirror', e.target.checked)} />
+            Mirror the preview
+          </label>
+        )}
       </section>
     </div>
   )

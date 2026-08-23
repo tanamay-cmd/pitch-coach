@@ -32,18 +32,40 @@ export interface CaptureHandles {
   chunks: Blob[]
 }
 
-export async function openCamera(withVideo: boolean): Promise<MediaStream> {
+export interface CameraResult {
+  stream: MediaStream
+  /** True when video was requested but no camera exists, so we silently retried audio-only. */
+  fellBackToAudio: boolean
+}
+
+/** getUserMedia error names that mean "no such device" rather than "permission denied". */
+const NO_DEVICE_ERRORS = new Set(['NotFoundError', 'OverconstrainedError', 'DevicesNotFoundError'])
+
+export async function openCamera(withVideo: boolean): Promise<CameraResult> {
   if (typeof navigator === 'undefined' || !navigator.mediaDevices?.getUserMedia) {
     throw new Error(
-      'This browser will not expose the camera. On iOS and macOS this usually means the page is not on https:// or localhost.',
+      `This browser will not expose the ${withVideo ? 'camera' : 'microphone'}. On iOS and macOS this usually means the page is not on https:// or localhost.`,
     )
   }
-  return navigator.mediaDevices.getUserMedia({
-    audio: { echoCancellation: true, noiseSuppression: true },
-    video: withVideo
-      ? { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' }
-      : false,
-  })
+  const audio = { echoCancellation: true, noiseSuppression: true }
+  if (!withVideo) {
+    return { stream: await navigator.mediaDevices.getUserMedia({ audio, video: false }), fellBackToAudio: false }
+  }
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      audio,
+      video: { width: { ideal: 1280 }, height: { ideal: 720 }, facingMode: 'user' },
+    })
+    return { stream, fellBackToAudio: false }
+  } catch (e) {
+    // No camera on this machine — practising by voice is still the point of the app,
+    // so fall back rather than dead-ending on a device error.
+    if (e instanceof Error && NO_DEVICE_ERRORS.has(e.name)) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio, video: false })
+      return { stream, fellBackToAudio: true }
+    }
+    throw e
+  }
 }
 
 export function startRecorder(stream: MediaStream, withVideo: boolean): CaptureHandles {

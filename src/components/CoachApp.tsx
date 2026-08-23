@@ -258,18 +258,26 @@ export default function CoachApp() {
     setCurrentTake(null)
     setLiveTranscript('')
     setInterim('')
+    let recordVideo = settings.recordVideo
     try {
-      const s = await openCamera(settings.recordVideo)
+      const { stream: s, fellBackToAudio } = await openCamera(recordVideo)
+      if (fellBackToAudio) {
+        recordVideo = false
+        setSettings((prev) => ({ ...prev, recordVideo: false }))
+      }
       setStream(s)
-      captureRef.current = startRecorder(s, settings.recordVideo)
-      if (!captureRef.current.recorder) {
+      captureRef.current = startRecorder(s, recordVideo)
+      if (fellBackToAudio) {
+        setNotice('No camera was found on this device — switched to audio-only. You can turn video back on in Settings if a camera becomes available.')
+      } else if (!captureRef.current.recorder) {
         setNotice('This browser will not record playback, but the timer, transcript, and scoring all still work.')
       }
     } catch (e) {
+      const device = recordVideo ? 'camera' : 'microphone'
       setError(
         e instanceof Error
-          ? `${e.message} On iOS and macOS, camera access needs https:// or localhost, and permission must be granted for this site.`
-          : 'Could not open the camera.',
+          ? `${e.message} On iOS and macOS, ${device} access needs https:// or localhost, and permission must be granted for this site.`
+          : `Could not open the ${device}.`,
       )
       return
     }
@@ -395,7 +403,7 @@ export default function CoachApp() {
       <header className="mb-5">
         <h1 className="text-xl font-semibold tracking-tight">Pitch Coach</h1>
         <p className="mt-0.5 text-[13px] text-[var(--color-muted)]">
-          Answer on camera. Get scored on what you actually said.
+          {settings.recordVideo ? 'Answer on camera.' : 'Answer out loud.'} Get scored on what you actually said.
           <span className="ml-2 rounded-full border border-[var(--color-line)] px-2 py-0.5 text-[11px]">
             {hasKey ? (serverKey && !settings.apiKey.trim() ? 'AI coaching · server key' : 'AI coaching · your key') : 'local scoring only'}
           </span>
